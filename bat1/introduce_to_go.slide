@@ -1,0 +1,263 @@
+BAT后台开发入门
+Go语言基础
+
+peng
+西七楼
+
+* Go开发环境
+
+*安装Go*
+
+- 到[[https://golang.org/dl/]]下载安装包，按照提示安装即可。
+- 推荐按照默认配置安装
+
+*工作环境和GOPATH*
+
+GOPATH就是Go的工作环境，你所有的代码，包和可执行文件都在这里。
+
+- Windows用户的GOPATH是 *c:\Go*
+- Linux用户的GOPATH是 *$HOME/go*
+
+推荐学习系列课程的朋友们，安装Ubuntu发行版的Linux，因为绝大多数的后台程序都是运行在Linux上的。
+
+* Go开发环境
+
+在GOPATH下创建目录 *src/myfirstgo* ，新建文件 *hello.go* 。
+
+.play -numbers myfirstgo/hello.go
+
+- 执行命令
+	go build
+- 当前目录会生成可执行文件 *myfirstgo*
+- 运行
+	./myfirstgo
+
+看到输出hello world!，你的Go开发环境已搭建成功。
+
+* Go语言基础
+
+* Package
+
+.code -numbers myfirstgo/hello.go
+
+- line 1：package main
+	每一个Go文件都需要有package名字
+	一个目录为一个package，目录下所有文件有同样的package名字
+	如果是生成可执行文件的话，package名字必须是main
+- line 3：import "fmt"
+	import代表加载fmt这个package
+	fmt是Go的标准库，用来格式化输出
+
+* Package
+
+.code -numbers myfirstgo/hello.go
+
+- line 5：func main() {
+	func代表这是一个名字是main的函数，{必须在同一行，不能换行
+	main函数是可执行文件的入口
+- line 6：fmt.Println("...")
+	调用fmt package的Println方法
+
+* 常量和变量
+
+.code -numbers variables/var.go
+
+- const定义常量，也就是不能更改的
+- var定义变量，也就是可以更改的
+	bool表示布尔型，有true和false值
+	int表示整形值，一般为64位整形，具体与编译器实现相关
+	string表示字符串
+	byte表示一个字节，类似于c/java的char
+	float32表示一个32位浮点数，float64表示64位浮点数
+
+还有一些const和var的用法，这里先不讲太多，以免学起来有负担。我会给一些参考资料供大家延伸阅读。
+
+* 数组
+
+	var arr []byte = make([]byte, 10)
+	var nums []int = []int{1, 2, 3}
+
+- []byte就表示一个byte数组
+- make([]byte, 10)表示分配一个容量为10的byte数组，类似于c/java里的malloc/new
+	Go内置垃圾回收机制，不需要free/delete
+- []int{1, 2, 3}表示分配一个大小为3的int数组，并且赋值
+
+Go里面有Array和Slice的区别，稍微复杂一点，初学者可以对语言更熟悉了再去了解。总的来说就是：
+
+- array是底层的数据存储
+- slice只是array上的的引用
+
+具体可以参考 [[https://blog.golang.org/go-slices-usage-and-internals]]
+
+* 字典map
+
+	var mapping map[string]int = make(map[string]int)
+	mapping["apple"] = 3
+	mapping["pear"] = 5
+
+- map[string]int表示string到int的map
+- make(map[string]int)表示分配一个string到int的map
+- 典型应用是有3个apple，5个pear
+
+*make* 指令
+
+- make就是Go里面分配数据结构的指令，数组和字典都必须先分配再使用，否则会出错
+- 因为Go有类似java的垃圾回收机制，在数据结构用完之后，会自动回收
+
+* 函数func和控制语句if/else/for
+
+.play -numbers funcs/func.go
+
+* 函数func和控制语句if/else/for
+
+函数func
+
+- line 5: func sum(arr []int) int {
+	定义函数sum
+	输入参数arr，是一个int数组
+	返回值int
+
+for循环
+
+- line 7: for _, num := range arr {
+	a := 2 也是Go定义变量的一种方式，等同于于 var a int = 2
+	Go也支持同时对多个变量赋值，比如 a, b, c := 2, 3, 5
+	range arr对arr遍历，每次返回一个二元组 (index, value)，上面这个例子就是依次返回 {0, 1}, {1, 2}, {2, 3}, {3, 5}, {4, 8}, ...
+	_, num := range arr 中的 _ 表示忽略掉返回值中的第一位，即index
+
+* 函数func和控制语句if/else/for
+
+if/else条件判断
+
+- line 8: if num > 10 {
+	如果num大于10，就...
+- line 10: } else {
+	否则，也就是num小于等于10，就...
+
+另外还有switch控制语句，这里就先不讲了，感兴趣的可以看Golang官方文档。我们后续的课程中，需要用的时候再讲。
+
+* struct和interface
+
+.play -numbers structs/struct.go /^/,/3.14159$/
+
+* struct和interface
+
+.play -numbers structs/struct.go /^const PI/,/END OMIT/
+
+* struct和interface
+
+interface是Go中面向对象编程的实现方式，优秀的interface定义可以参考Go标准库的 *fmt* 和 *error*
+
+- line 5: type Shape interface {
+	定义Shape这个interface，包含Area()和Perimeter()这两个函数
+- line 6: Area() float32
+	定义Area()函数，返回float32
+
+struct结构体，通常有2个用途：
+
+- 把相关的变量定义在一起，比如例程中的Rectangle
+- 实现interface定义的所有函数
+
+* struct和interface
+
+Rectangle和Circle结构体
+
+- line 10: type Rectangle struct {
+	定义Rectangle这个结构体
+- line 11: height, width float32
+	Rectangle包含height和width这2个成员变量
+
+成员变量
+
+- 成员变量分为struct私有的和公有的
+	私有的，即为只在struct内部使用的
+	公有的，即为可以在struct外部调用的
+- Go用成员变量的首字符大小写来区分公有还是私有
+	小写开头为私有，比如height, width
+	大写开头为公有，比如Height, Width
+
+* struct和interface
+
+实现Interface的方法：
+
+- line 14: func (r Rectangle) Area() float32 {
+	func Area() float32 定义一个普通函数
+	func (r Rectangle) Area() float32 定义Rectangle结构体的函数
+	func (r *Rectangle) Area() float32 定义的是*Rectangle的函数，这里与Rectangle有区别
+
+创建interface/struct实例
+
+- line 37: var one Shape = Rectangle{height: 5, width: 3}
+	var one Shape 定义interface Shape的变量one
+	Rectangle{height: 5, width: 3} 新建height为5，width为3的Rectangle
+	因为Rectangle实现了interface Shape的Area()和Perimeter()函数，所以可以把Rectangle实例赋值给Shape变量one
+- line 38: var two Shape = Circle{radius: 4}
+	赋值Circle实例给Shape变量two
+
+* struct和interface
+
+调用interface的方法
+
+- line39: one.Area()
+	调用one.Area()函数，实际执行的是Rectangle的Area()函数
+- line40: two.Perimeter()
+	调用two.Perimeter()函数，实际执行的是Circle的Perimeter()函数
+
+* Go语言基础
+
+- 并发goroutine/channel/select/runtime
+	Go对并发的语言级别的支持，是Go在后台开发工具中胜出的主要原因。
+	但是现在我们暂时不讲这个，后续专门讲并发编程的时候再学。
+
+至此为止，你应该大致了解Go的语言基础了，并且足以应付下一阶段的课程。
+
+在下一个大的主题 *算法与数据结构* 中，你还会有很多练习Go的机会。
+
+* Go编辑器和工具链
+
+Go集成开发环境
+
+- Go的IDE我推荐初学者用[[https://github.com/visualfc/liteide]]
+- Sublime Text 3也不错，可以搭配Go相关的插件
+- 我个人使用vim，配合vim-go插件很好用
+- 跑小程序用Go Playground [[https://play.golang.org]]
+
+Go工具链
+
+- go build 构建工具，是必须的
+- go fmt 代码格式标准化工具，是必须的
+- go lint 代码风格检查工具，推荐初学者使用，从开始就养成好习惯
+- 其他很多工具，你暂时用不上，也不用增加学习负担了
+
+* 延伸阅读
+
+- How to Write Go Code [[https://golang.org/doc/code.html]]
+- A Tour of Go [[https://tour.golang.org/welcome/1]]
+- Build Web Application with Golang第一章和第二章 [[https://github.com/astaxie/build-web-application-with-golang]]
+
+进阶阅读
+
+- Effective Go [[https://golang.org/doc/effective_go.html]]
+- Go FAQ [[https://golang.org/doc/faq]]
+
+这也是Go的另一个优势，官方文档写得非常好
+
+* 课后作业
+
+开发环境
+
+- 使用Windows的朋友，请安装Ubuntu的虚拟机，可用VMWare Fusion
+- 安装Go，构建好自己的IDE，配置好go build/go fmt/go lint工具
+- 成功运行hello world程序
+
+开发作业
+
+- 完成练习 A Tour of Go [[https://tour.golang.org/welcome/1]]
+- 自己实现struct/interface的例程，并增加三角形Triangle的实现
+- 实践Go的除并发相关的保留字的用法
+	break    default      func    interface    select
+	case     defer        go      map          struct
+	chan     else         goto    package      switch
+	const    fallthrough  if      range        type
+	continue for          import  return       var
+
